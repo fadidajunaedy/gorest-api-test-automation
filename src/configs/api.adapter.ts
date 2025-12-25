@@ -15,3 +15,5 @@ export const commonHeaders = {
   "Content-Type": "application/json",
   Accept: "application/json",
 };
+
+export default api;
