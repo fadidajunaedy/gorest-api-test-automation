@@ -9,4 +9,16 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
+  reporters: [
+    "default", // Biar tetep muncul di terminal
+    [
+      "jest-html-reporters",
+      {
+        publicPath: "./html-report",
+        filename: "report.html",
+        expand: true,
+        pageTitle: "Go REST API Testing Report",
+      },
+    ],
+  ],
 };
