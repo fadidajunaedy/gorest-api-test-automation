@@ -1,17 +1,17 @@
-import { faker } from "@faker-js/faker";
+import { rand, randEmail, randFirstName, randLastName } from "@ngneat/falso";
 import { User } from "../interfaces/user.interface";
 
 const generateUser = (): User => {
-  const gender = faker.helpers.arrayElement(["male", "female"]);
-  const firstName = faker.person.firstName(gender);
-  const lastName = faker.person.lastName(gender);
+  const gender = rand(["male", "female"]) as "male" | "female";
+  const firstName = randFirstName({ gender: gender });
+  const lastName = randLastName();
   const fullName = `${firstName} ${lastName}`;
 
   return {
     name: fullName,
     gender: gender,
-    email: faker.internet.email({ firstName, lastName }).toLowerCase(),
-    status: faker.helpers.arrayElement(["active", "inactive"]),
+    email: randEmail({ firstName, lastName, suffix: "com" }).toLowerCase(),
+    status: rand(["active", "inactive"]),
   };
 };
 
