@@ -1,2 +1,6 @@
 .env
 node_modules/
+html-report/
+logs/
+*.log
+npm-debug.log
