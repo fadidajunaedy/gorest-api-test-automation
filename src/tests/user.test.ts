@@ -263,4 +263,32 @@ describe.only("User Data Validation", () => {
     logger.info("Create User successfully failed because status is invalid");
     logger.info("== END CASE: CREATE USER WITH MISSING MANDATORY FIELDS ==");
   });
+
+  test.only("POST User should be failed when email is invalid", async () => {
+    const userData: User = {
+      ...generateUser(),
+      email: "fadidajunaedy.com",
+    };
+    logger.info("== STARTING CASE: CREATE USER WITH INVALID EMAIL ==");
+    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
+
+    const response: Response = await api
+      .post("/users")
+      .set(commonHeaders)
+      .send(userData);
+    logger.debug(`Response Status: ${response.status}`);
+    logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
+
+    if (response.status !== 422) {
+      logger.error(`Expected 422 but got ${response.status}`);
+      logger.error(`Response Body: ${JSON.stringify(response.body)}`);
+    }
+
+    expect(response.status).toBe(422);
+    expect(response.body[0].field).toBe("email");
+    expect(response.body[0].message).toBe("is invalid");
+
+    logger.info("Create User successfully failed because email is invalid");
+    logger.info("== END CASE: CREATE USER WITH INVALID EMAIL ==");
+  });
 });
