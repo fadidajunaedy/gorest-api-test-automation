@@ -116,3 +116,38 @@ describe("E2E: User Lifecycle Flow", () => {
     logger.info("== END CASE: DELETE USER ==");
   });
 });
+
+describe.only("User Data Validation", () => {
+  test("POST User should failed when email duplicated", async () => {
+    const userData = generateUser();
+
+    logger.info("== STARTING CASE: CREATE USER WITH DUPLICATED EMAIL ==");
+    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
+
+    const firstResponse = await api
+      .post("/users")
+      .set(commonHeaders)
+      .send(userData);
+
+    logger.debug(`First Response Status: ${firstResponse.status}`);
+    logger.debug(`First Response Body: ${JSON.stringify(firstResponse.body)}`);
+    expect(firstResponse.status).toBe(201);
+
+    const secondResponse = await api
+      .post("/users")
+      .set(commonHeaders)
+      .send(userData);
+
+    logger.debug(`Second Response Status: ${secondResponse.status}`);
+    logger.debug(
+      `Second Response Body: ${JSON.stringify(secondResponse.body)}`
+    );
+
+    expect(secondResponse.status).toBe(422);
+    expect(secondResponse.body[0].field).toBe("email");
+    expect(secondResponse.body[0].message).toBe("has already been taken");
+
+    logger.info("Create User successfully failed because email is duplicated");
+    logger.info("== END CASE: CREATE USER WITH DUPLICATED EMAIL ==");
+  });
+});
