@@ -130,7 +130,7 @@ describe("E2E: User Lifecycle Flow", () => {
   });
 });
 
-describe.only("User Data Validation", () => {
+describe("User Data Validation", () => {
   test("POST User should failed when email duplicated", async () => {
     const userData: User = generateUser();
     logger.info("== STARTING CASE: CREATE USER WITH DUPLICATED EMAIL ==");
@@ -197,6 +197,9 @@ describe.only("User Data Validation", () => {
 
     expect(response.status).toBe(422);
     expect(response.body[0].field).toBe("gender");
+    expect(response.body[0].message).toBe(
+      "can't be blank, can be male of female"
+    );
 
     logger.info("Create User successfully failed because gender is invalid");
     logger.info("== END CASE: CREATE USER WITH INVALID EMAIL ==");
@@ -224,6 +227,7 @@ describe.only("User Data Validation", () => {
 
     expect(response.status).toBe(422);
     expect(response.body[0].field).toBe("status");
+    expect(response.body[0].message).toBe("can't be blank");
 
     logger.info("Create User successfully failed because status is invalid");
     logger.info("== END CASE: CREATE USER WITH INVALID STATUS ==");
@@ -264,7 +268,7 @@ describe.only("User Data Validation", () => {
     logger.info("== END CASE: CREATE USER WITH MISSING MANDATORY FIELDS ==");
   });
 
-  test.only("POST User should be failed when email is invalid", async () => {
+  test("POST User should be failed when email is invalid", async () => {
     const userData: User = {
       ...generateUser(),
       email: "fadidajunaedy.com",
