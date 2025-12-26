@@ -296,3 +296,30 @@ describe("User Data Validation", () => {
     logger.info("== END CASE: CREATE USER WITH INVALID EMAIL ==");
   });
 });
+
+describe.only("Security & Authentication", () => {
+  test("POST User should be failed when there is no Header Authorization", async () => {
+    const userData: User = generateUser();
+    logger.info(
+      "== STARTING CASE: CREATE USER WITHOUT HEADER AUTHORIZATION =="
+    );
+    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
+
+    const response: Response = await api.post("/users").send(userData);
+    logger.debug(`Response Status: ${response.status}`);
+    logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
+
+    if (response.status !== 401) {
+      logger.error(`Expected 401 but got ${response.status}`);
+      logger.error(`Response Body: ${JSON.stringify(response.body)}`);
+    }
+
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe("Authentication failed");
+
+    logger.info(
+      "Create User successfully failed because there is no header Authorization"
+    );
+    logger.info("== END CASE: CREATE USER WITHOUT HEADER AUTHORIZATION ==");
+  });
+});
