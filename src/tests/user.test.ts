@@ -53,6 +53,7 @@ describe("E2E: User Lifecycle Flow", () => {
     expect(response.body.name).toBe(userData.name);
     expect(response.body.email).toBe(userData.email);
 
+    logger.info("Get Detail User success");
     logger.info("== END CASE: GET USER DETAIL ==");
   });
 
@@ -82,6 +83,7 @@ describe("E2E: User Lifecycle Flow", () => {
     expect(response.body.name).toBe(userData.name);
     expect(response.body.email).toBe(userData.email);
     expect(response.body.status).not.toBe(userData.status);
+    logger.info("Update User success");
     logger.info("== END CASE: UPDATE USER ==");
   });
 
@@ -98,6 +100,7 @@ describe("E2E: User Lifecycle Flow", () => {
     }
     expect(response.status).toBe(204);
 
+    logger.info("Delete User success");
     logger.info(`Verify the deletion User with ID: ${userId}`);
     logger.debug(`ID Params: ${userId}`);
     const verifyResponse = await api.get(`/users/${userId}`).set(commonHeaders);
