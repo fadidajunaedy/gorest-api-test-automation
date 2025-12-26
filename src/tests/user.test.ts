@@ -3,6 +3,7 @@ import { User } from "../interfaces/user.interface";
 
 import generateUser from "../utils/user.generator";
 import logger from "../utils/logger";
+import { Response } from "supertest";
 
 describe("E2E: User Lifecycle Flow", () => {
   let userId: number;
@@ -119,25 +120,23 @@ describe("E2E: User Lifecycle Flow", () => {
 
 describe.only("User Data Validation", () => {
   test("POST User should failed when email duplicated", async () => {
-    const userData = generateUser();
+    const userData: User = generateUser();
 
     logger.info("== STARTING CASE: CREATE USER WITH DUPLICATED EMAIL ==");
-    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
-
-    const firstResponse = await api
+    logger.debug(`First Request Body: ${JSON.stringify(userData)}`);
+    const firstResponse: Response = await api
       .post("/users")
       .set(commonHeaders)
       .send(userData);
-
     logger.debug(`First Response Status: ${firstResponse.status}`);
     logger.debug(`First Response Body: ${JSON.stringify(firstResponse.body)}`);
     expect(firstResponse.status).toBe(201);
 
-    const secondResponse = await api
+    logger.debug(`Second Request Body: ${JSON.stringify(userData)}`);
+    const secondResponse: Response = await api
       .post("/users")
       .set(commonHeaders)
       .send(userData);
-
     logger.debug(`Second Response Status: ${secondResponse.status}`);
     logger.debug(
       `Second Response Body: ${JSON.stringify(secondResponse.body)}`
@@ -149,5 +148,34 @@ describe.only("User Data Validation", () => {
 
     logger.info("Create User successfully failed because email is duplicated");
     logger.info("== END CASE: CREATE USER WITH DUPLICATED EMAIL ==");
+  });
+
+  test("POST User should be failed when gender is invalid", async () => {
+    const userData: User = {
+      ...generateUser(),
+      gender: "Lanang" as any,
+    };
+
+    logger.info("== STARTING CASE: CREATE USER WITH INVALID GENDER ==");
+    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
+    const response: Response = await api
+      .post("/users")
+      .set(commonHeaders)
+      .send(userData);
+    logger.debug(`Response Status: ${response.status}`);
+    logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
+
+    if (response.status !== 422) {
+      logger.error(
+        `Update User failed. Expected 422 but got ${response.status}`
+      );
+      logger.error(`Response Body: ${JSON.stringify(response.body)}`);
+    }
+
+    expect(response.status).toBe(422);
+    expect(response.body[0].field).toBe("gender");
+
+    logger.info("Create User successfully failed because gender is invalid");
+    logger.info("== END CASE: CREATE USER WITH INVALID EMAIL ==");
   });
 });
