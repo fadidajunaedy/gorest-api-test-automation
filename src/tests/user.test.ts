@@ -192,4 +192,70 @@ describe.only("User Data Validation", () => {
     logger.info("Create User successfully failed because gender is invalid");
     logger.info("== END CASE: CREATE USER WITH INVALID EMAIL ==");
   });
+
+  test("POST User should be failed when status is invalid", async () => {
+    const userData: User = {
+      ...generateUser(),
+      status: "Sick" as any,
+    };
+    logger.info("== STARTING CASE: CREATE USER WITH INVALID STATUS ==");
+    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
+
+    const response: Response = await api
+      .post("/users")
+      .set(commonHeaders)
+      .send(userData);
+    logger.debug(`Response Status: ${response.status}`);
+    logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
+
+    if (response.status !== 422) {
+      logger.error(
+        `Create User failed. Expected 422 but got ${response.status}`
+      );
+      logger.error(`Response Body: ${JSON.stringify(response.body)}`);
+    }
+
+    expect(response.status).toBe(422);
+    expect(response.body[0].field).toBe("status");
+
+    logger.info("Create User successfully failed because status is invalid");
+    logger.info("== END CASE: CREATE USER WITH INVALID STATUS ==");
+  });
+
+  test.only("POST User should be failed when missing mandatory fields", async () => {
+    const userData = {
+      name: "Fadida Junaedy",
+      email: "fadidajunaedy@mail.com",
+    };
+
+    logger.info(
+      "== STARTING CASE: CREATE USER WITH MISSING MANDATORY FIELDS =="
+    );
+    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
+
+    const response: Response = await api
+      .post("/users")
+      .set(commonHeaders)
+      .send(userData);
+    logger.debug(`Response Status: ${response.status}`);
+    logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
+
+    if (response.status !== 422) {
+      logger.error(
+        `Create User failed. Expected 422 but got ${response.status}`
+      );
+      logger.error(`Response Body: ${JSON.stringify(response.body)}`);
+    }
+
+    expect(response.status).toBe(422);
+    expect(response.body[0].field).toBe("gender");
+    expect(response.body[0].message).toBe(
+      "can't be blank, can be male of female"
+    );
+    expect(response.body[1].field).toBe("status");
+    expect(response.body[1].message).toBe("can't be blank");
+
+    logger.info("Create User successfully failed because status is invalid");
+    logger.info("== END CASE: CREATE USER WITH MISSING MANDATORY FIELDS ==");
+  });
 });
