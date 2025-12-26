@@ -143,6 +143,12 @@ describe.only("User Data Validation", () => {
     logger.debug(`First Response Status: ${firstResponse.status}`);
     logger.debug(`First Response Body: ${JSON.stringify(firstResponse.body)}`);
 
+    if (firstResponse.status !== 201) {
+      logger.error(
+        `Create User failed. Expected 201 but got ${firstResponse.status}`
+      );
+      logger.error(`Response Body: ${JSON.stringify(firstResponse.body)}`);
+    }
     expect(firstResponse.status).toBe(201);
 
     logger.debug(`Second Request Body: ${JSON.stringify(userData)}`);
@@ -155,6 +161,11 @@ describe.only("User Data Validation", () => {
     logger.debug(
       `Second Response Body: ${JSON.stringify(secondResponse.body)}`
     );
+
+    if (secondResponse.status !== 422) {
+      logger.error(`Expected 422 but got ${secondResponse.status}`);
+      logger.error(`Response Body: ${JSON.stringify(secondResponse.body)}`);
+    }
 
     expect(secondResponse.status).toBe(422);
     expect(secondResponse.body[0].field).toBe("email");
@@ -180,9 +191,7 @@ describe.only("User Data Validation", () => {
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
 
     if (response.status !== 422) {
-      logger.error(
-        `Update User failed. Expected 422 but got ${response.status}`
-      );
+      logger.error(`Expected 422 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
 
@@ -209,9 +218,7 @@ describe.only("User Data Validation", () => {
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
 
     if (response.status !== 422) {
-      logger.error(
-        `Create User failed. Expected 422 but got ${response.status}`
-      );
+      logger.error(`Expected 422 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
 
@@ -222,7 +229,7 @@ describe.only("User Data Validation", () => {
     logger.info("== END CASE: CREATE USER WITH INVALID STATUS ==");
   });
 
-  test.only("POST User should be failed when missing mandatory fields", async () => {
+  test("POST User should be failed when missing mandatory fields", async () => {
     const userData = {
       name: "Fadida Junaedy",
       email: "fadidajunaedy@mail.com",
@@ -241,9 +248,7 @@ describe.only("User Data Validation", () => {
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
 
     if (response.status !== 422) {
-      logger.error(
-        `Create User failed. Expected 422 but got ${response.status}`
-      );
+      logger.error(`Expected 422 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
 
