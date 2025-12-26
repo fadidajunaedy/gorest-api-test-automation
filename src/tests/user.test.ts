@@ -17,7 +17,10 @@ describe("E2E: User Lifecycle Flow", () => {
     logger.info("== STARTING CASE: CREATE USER ==");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
-    const response = await api.post("/users").set(commonHeaders).send(userData);
+    const response: Response = await api
+      .post("/users")
+      .set(commonHeaders)
+      .send(userData);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
 
@@ -41,7 +44,9 @@ describe("E2E: User Lifecycle Flow", () => {
     logger.info("== STARTING CASE: GET USER DETAIL ==");
     logger.debug(`ID Param: ${userId}`);
 
-    const response = await api.get(`/users/${userId}`).set(commonHeaders);
+    const response: Response = await api
+      .get(`/users/${userId}`)
+      .set(commonHeaders);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
 
@@ -59,17 +64,16 @@ describe("E2E: User Lifecycle Flow", () => {
   });
 
   test("PATCH User data update should be success", async () => {
-    const newStatus = userData.status == "active" ? "inactive" : "active";
-
+    const newStatus: string =
+      userData.status == "active" ? "inactive" : "active";
     logger.info("== STARTING CASE: UPDATE USER ==");
     logger.debug(`ID Params: ${userId}`);
     logger.debug(`Request Body: ${JSON.stringify({ status: newStatus })}`);
 
-    const response = await api
+    const response: Response = await api
       .patch(`/users/${userId}`)
       .set(commonHeaders)
       .send({ status: newStatus });
-
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
 
@@ -84,6 +88,7 @@ describe("E2E: User Lifecycle Flow", () => {
     expect(response.body.name).toBe(userData.name);
     expect(response.body.email).toBe(userData.email);
     expect(response.body.status).not.toBe(userData.status);
+
     logger.info("Update User success");
     logger.info("== END CASE: UPDATE USER ==");
   });
@@ -92,19 +97,25 @@ describe("E2E: User Lifecycle Flow", () => {
     logger.info("== STARTING CASE: DELETE USER ==");
     logger.debug(`ID Params: ${userId}`);
 
-    const response = await api.delete(`/users/${userId}`).set(commonHeaders);
+    const response: Response = await api
+      .delete(`/users/${userId}`)
+      .set(commonHeaders);
     if (response.status !== 204) {
       logger.error(
         `Delete User failed. Expected 204 but got ${response.status}`
       );
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
+
     expect(response.status).toBe(204);
 
     logger.info("Delete User success");
     logger.info(`Verify the deletion User with ID: ${userId}`);
     logger.debug(`ID Params: ${userId}`);
-    const verifyResponse = await api.get(`/users/${userId}`).set(commonHeaders);
+
+    const verifyResponse: Response = await api
+      .get(`/users/${userId}`)
+      .set(commonHeaders);
     if (verifyResponse.status !== 404) {
       logger.error(
         `Verify User deletion failed. Expected 404 but got ${verifyResponse.status}`
@@ -113,6 +124,7 @@ describe("E2E: User Lifecycle Flow", () => {
     }
 
     expect(verifyResponse.status).toBe(404);
+
     logger.info("Verify User deletion success");
     logger.info("== END CASE: DELETE USER ==");
   });
@@ -121,18 +133,20 @@ describe("E2E: User Lifecycle Flow", () => {
 describe.only("User Data Validation", () => {
   test("POST User should failed when email duplicated", async () => {
     const userData: User = generateUser();
-
     logger.info("== STARTING CASE: CREATE USER WITH DUPLICATED EMAIL ==");
     logger.debug(`First Request Body: ${JSON.stringify(userData)}`);
+
     const firstResponse: Response = await api
       .post("/users")
       .set(commonHeaders)
       .send(userData);
     logger.debug(`First Response Status: ${firstResponse.status}`);
     logger.debug(`First Response Body: ${JSON.stringify(firstResponse.body)}`);
+
     expect(firstResponse.status).toBe(201);
 
     logger.debug(`Second Request Body: ${JSON.stringify(userData)}`);
+
     const secondResponse: Response = await api
       .post("/users")
       .set(commonHeaders)
@@ -155,9 +169,9 @@ describe.only("User Data Validation", () => {
       ...generateUser(),
       gender: "Lanang" as any,
     };
-
     logger.info("== STARTING CASE: CREATE USER WITH INVALID GENDER ==");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
+
     const response: Response = await api
       .post("/users")
       .set(commonHeaders)
