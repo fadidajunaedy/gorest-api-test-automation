@@ -322,4 +322,36 @@ describe.only("Security & Authentication", () => {
     );
     logger.info("== END CASE: CREATE USER WITHOUT HEADER AUTHORIZATION ==");
   });
+
+  test("POST User should be failed with invalid token Authorization", async () => {
+    const userData: User = generateUser();
+    logger.info(
+      "== STARTING CASE: CREATE USER WITH INVALID TOKEN AUTHORIZATION =="
+    );
+    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
+
+    const response: Response = await api
+      .post("/users")
+      .set({
+        Authorization: `Bearer 123456`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      })
+      .send(userData);
+    logger.debug(`Response Status: ${response.status}`);
+    logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
+
+    if (response.status !== 401) {
+      logger.error(`Expected 401 but got ${response.status}`);
+      logger.error(`Response Body: ${JSON.stringify(response.body)}`);
+    }
+
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe("Invalid token");
+
+    logger.info(
+      "Create User successfully failed because token Authorization is invalid"
+    );
+    logger.info("== END CASE: CREATE USER WITH INVALID TOKEN AUTHORIZATION ==");
+  });
 });
