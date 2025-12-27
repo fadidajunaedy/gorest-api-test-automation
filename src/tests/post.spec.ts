@@ -51,4 +51,23 @@ describe.only("Feature: User Posts", () => {
     expect(response.body.body).toBe(postData.body);
     logger.info(`Create Post success with ID: ${response.body.user_id}`);
   });
+
+  test("Should create post successfully using Root URL (/posts) with user_id in body", async () => {
+    const postData: Post = generatePost(userId);
+    const response: Response = await api
+      .post(`/posts`)
+      .set(commonHeaders)
+      .send(postData);
+    logger.debug(`Response Status: ${response.status}`);
+    logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
+    if (response.status !== 201) {
+      logger.error(`Create Post fail. Expected 201 but got ${response.status}`);
+      logger.error(`Response Body: ${JSON.stringify(response.body)}`);
+    }
+    expect(Number(response.status)).toBe(201);
+    expect(response.body.user_id).toBe(userId);
+    expect(response.body.title).toBe(postData.title);
+    expect(response.body.body).toBe(postData.body);
+    logger.info(`Create Post success with ID: ${response.body.user_id}`);
+  });
 });
