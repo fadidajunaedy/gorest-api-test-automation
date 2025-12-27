@@ -1,11 +1,11 @@
+import { Response } from "supertest";
 import api, { commonHeaders } from "../configs/api.adapter";
 import { User } from "../interfaces/user.interface";
 
-import generateUser from "../utils/user.generator";
 import logger from "../utils/logger";
-import { Response } from "supertest";
+import generateUser from "../utils/user.generator";
 
-describe("E2E: User Lifecycle Flow", () => {
+describe("Feature: User Resource - CRUD Operations", () => {
   let userId: number;
   let userData: User;
 
@@ -13,7 +13,7 @@ describe("E2E: User Lifecycle Flow", () => {
     userData = generateUser();
   });
 
-  test("POST User should be success with valid data", async () => {
+  test("Should create a new user successfully with valid data (201 Created)", async () => {
     logger.info("== STARTING CASE: CREATE USER ==");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
@@ -40,7 +40,7 @@ describe("E2E: User Lifecycle Flow", () => {
     logger.info("== END CASE: CREATE USER ==");
   });
 
-  test("GET User detail should be success with valid id", async () => {
+  test("Should retrieve user details successfully using valid ID (200 OK)", async () => {
     logger.info("== STARTING CASE: GET USER DETAIL ==");
     logger.debug(`ID Param: ${userId}`);
 
@@ -63,7 +63,7 @@ describe("E2E: User Lifecycle Flow", () => {
     logger.info("== END CASE: GET USER DETAIL ==");
   });
 
-  test("PATCH User data update should be success", async () => {
+  test("Should update user status successfully (200 OK)", async () => {
     const newStatus: string =
       userData.status == "active" ? "inactive" : "active";
     logger.info("== STARTING CASE: UPDATE USER ==");
@@ -93,7 +93,7 @@ describe("E2E: User Lifecycle Flow", () => {
     logger.info("== END CASE: UPDATE USER ==");
   });
 
-  test("DELETE User data should be success", async () => {
+  test("Should delete user successfully and verify non-existence (204 No Response Body)", async () => {
     logger.info("== STARTING CASE: DELETE USER ==");
     logger.debug(`ID Params: ${userId}`);
 
@@ -130,8 +130,8 @@ describe("E2E: User Lifecycle Flow", () => {
   });
 });
 
-describe("User Data Validation", () => {
-  test("POST User should failed when email duplicated", async () => {
+describe("Feature: User Resource - Validation", () => {
+  test("Should return 422 when creating a user with a duplicated email", async () => {
     const userData: User = generateUser();
     logger.info("== STARTING CASE: CREATE USER WITH DUPLICATED EMAIL ==");
     logger.debug(`First Request Body: ${JSON.stringify(userData)}`);
@@ -175,7 +175,7 @@ describe("User Data Validation", () => {
     logger.info("== END CASE: CREATE USER WITH DUPLICATED EMAIL ==");
   });
 
-  test("POST User should be failed when gender is invalid", async () => {
+  test("Should return 422 when 'gender' value is invalid", async () => {
     const userData: User = {
       ...generateUser(),
       gender: "Lanang" as any,
@@ -205,7 +205,7 @@ describe("User Data Validation", () => {
     logger.info("== END CASE: CREATE USER WITH INVALID EMAIL ==");
   });
 
-  test("POST User should be failed when status is invalid", async () => {
+  test("Should return 422 when 'status' value is invalid", async () => {
     const userData: User = {
       ...generateUser(),
       status: "Sick" as any,
@@ -233,7 +233,7 @@ describe("User Data Validation", () => {
     logger.info("== END CASE: CREATE USER WITH INVALID STATUS ==");
   });
 
-  test("POST User should be failed when missing mandatory fields", async () => {
+  test("Should return 422 when mandatory fields are missing", async () => {
     const userData = {
       name: "Fadida Junaedy",
       email: "fadidajunaedy@mail.com",
@@ -268,7 +268,7 @@ describe("User Data Validation", () => {
     logger.info("== END CASE: CREATE USER WITH MISSING MANDATORY FIELDS ==");
   });
 
-  test("POST User should be failed when email is invalid", async () => {
+  test("Should return 422 when 'email' format is invalid", async () => {
     const userData: User = {
       ...generateUser(),
       email: "fadidajunaedy.com",
@@ -297,8 +297,8 @@ describe("User Data Validation", () => {
   });
 });
 
-describe.only("Security & Authentication", () => {
-  test("POST User should be failed when there is no Header Authorization", async () => {
+describe("Feature: User Resource - Security & Authentication", () => {
+  test("Should return 401 when Authorization header is missing", async () => {
     const userData: User = generateUser();
     logger.info(
       "== STARTING CASE: CREATE USER WITHOUT HEADER AUTHORIZATION =="
@@ -323,7 +323,7 @@ describe.only("Security & Authentication", () => {
     logger.info("== END CASE: CREATE USER WITHOUT HEADER AUTHORIZATION ==");
   });
 
-  test("POST User should be failed with invalid token Authorization", async () => {
+  test("Should return 401 when Authorization token is invalid", async () => {
     const userData: User = generateUser();
     logger.info(
       "== STARTING CASE: CREATE USER WITH INVALID TOKEN AUTHORIZATION =="
