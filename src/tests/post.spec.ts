@@ -33,6 +33,16 @@ describe.only("Feature: User Posts", () => {
     }
   });
 
+  beforeEach(() => {
+    const testName = expect.getState().currentTestName;
+    logger.info(`=== START: "${testName}" ===`);
+  });
+
+  afterEach(() => {
+    const testName = expect.getState().currentTestName;
+    logger.info(`=== END: "${testName}" ===`);
+  });
+
   test("Should create post successfully using Nested URL (/users/:id/posts)", async () => {
     const postData: Post = generatePost();
     const response: Response = await api
