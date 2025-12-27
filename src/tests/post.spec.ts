@@ -83,7 +83,7 @@ describe("Feature: User Posts", () => {
   });
 });
 
-describe.only("Feature: User Posts - Validation", () => {
+describe("Feature: User Posts - Validation", () => {
   let userId: number;
 
   beforeAll(async () => {
