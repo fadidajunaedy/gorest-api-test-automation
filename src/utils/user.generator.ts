@@ -3,8 +3,8 @@ import { User } from "../interfaces/user.interface";
 
 const generateUser = (): User => {
   const gender = rand(["male", "female"]) as "male" | "female";
-  const firstName = randFirstName({ gender: gender });
-  const lastName = randLastName();
+  const firstName = randFirstName({ gender: gender }).replace(/[^a-z0-9]/g, "");
+  const lastName = randLastName().replace(/[^a-z0-9]/g, "");
   const fullName = `${firstName} ${lastName}`;
 
   return {
