@@ -120,7 +120,7 @@ describe("Feature: User Posts - Validation", () => {
     logger.info(`=== END: "${testName}" ===`);
   });
 
-  test("Should return 422 when user_id in URL does not exist", async () => {
+  test("Should return 422 when user_id does not exist using Nested URL (/users/:id/posts)", async () => {
     const postData: Post = generatePost();
     const response: Response = await api
       .post(`/users/999999/posts`)
@@ -137,7 +137,7 @@ describe("Feature: User Posts - Validation", () => {
     expect(response.body[0].message).toBe("must exist");
   });
 
-  test("Should return 422 when user_id in URL with missing body fields", async () => {
+  test("Should return 422 when missing body fields using Nested URL (/users/:id/posts)", async () => {
     const response: Response = await api
       .post(`/users/${userId}/posts`)
       .set(commonHeaders)
@@ -158,7 +158,7 @@ describe("Feature: User Posts - Validation", () => {
     expect(response.body[1].message).toBe("can't be blank");
   });
 
-  test("Should return 422 when user_id in request body does not exist", async () => {
+  test("Should return 422 when user_id does not exist using Root URL (/posts)", async () => {
     const postData: Post = generatePost(999999);
     const response: Response = await api
       .post(`/posts`)
@@ -175,7 +175,7 @@ describe("Feature: User Posts - Validation", () => {
     expect(response.body[0].message).toBe("must exist");
   });
 
-  test("Should return 422 when user_id in request body with missing body fields", async () => {
+  test("Should return 422 when missing body fields using Root URL (/posts)", async () => {
     const response: Response = await api
       .post(`/posts`)
       .set(commonHeaders)
