@@ -7,7 +7,7 @@ import logger from "../utils/logger";
 import generateUser from "../utils/user.generator";
 import generatePost from "../utils/post.generator";
 
-describe("Feature: User Posts", () => {
+describe.only("Feature: User Posts", () => {
   let userId: number;
 
   beforeAll(async () => {
@@ -80,6 +80,45 @@ describe("Feature: User Posts", () => {
     expect(response.body.title).toBe(postData.title);
     expect(response.body.body).toBe(postData.body);
     logger.info(`Create Post success with ID: ${response.body.user_id}`);
+  });
+
+  test("Should retrieve list of posts for specific user using Nested URL (/users/:user_id/posts)", async () => {
+    logger.debug(`User ID Param: ${userId}`);
+    const response = await api.get(`/users/${userId}/posts`).set(commonHeaders);
+    logger.debug(`Response Status: ${response.status}`);
+    logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
+    if (response.status !== 200) {
+      logger.error(
+        `Get User Posts fail. Expected 200 but got ${response.status}`
+      );
+    }
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+    response.body.forEach((post: Post) => {
+      expect(Number(post.user_id)).toBe(userId);
+    });
+  });
+
+  test("Should retrieve list of posts filtered by user_id using Root URL (/posts?user_id=)", async () => {
+    logger.debug(`User ID Query: ${userId}`);
+    const response = await api
+      .get(`/posts`)
+      .set(commonHeaders)
+      .query({ user_id: userId });
+    logger.debug(`Response Status: ${response.status}`);
+    logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
+    if (response.status !== 200) {
+      logger.error(
+        `Get User Posts fail. Expected 200 but got ${response.status}`
+      );
+    }
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+    response.body.forEach((post: Post) => {
+      expect(Number(post.user_id)).toBe(userId);
+    });
   });
 });
 
