@@ -26,6 +26,13 @@ describe.only("Feature: User Posts", () => {
     userId = response.body.id;
   });
 
+  afterAll(async () => {
+    if (userId) {
+      await api.delete(`/users/${userId}`).set(commonHeaders);
+      logger.info(`Deleting User with ID: ${userId}`);
+    }
+  });
+
   test("Should create post successfully using Nested URL (/users/:id/posts)", async () => {
     const postData: Post = generatePost();
     const response: Response = await api
