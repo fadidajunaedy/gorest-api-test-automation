@@ -49,7 +49,6 @@ describe("Feature: User Resource - CRUD Operations", () => {
       .set(commonHeaders);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
-
     if (response.status !== 200) {
       logger.error(`Get User fail. Expected 200 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
@@ -120,14 +119,12 @@ describe("Feature: User Resource - Validation", () => {
   test("Should return 422 when creating a user with a duplicated email", async () => {
     const userData: User = generateUser();
     logger.debug(`First Request Body: ${JSON.stringify(userData)}`);
-
     const firstResponse: Response = await api
       .post("/users")
       .set(commonHeaders)
       .send(userData);
     logger.debug(`First Response Status: ${firstResponse.status}`);
     logger.debug(`First Response Body: ${JSON.stringify(firstResponse.body)}`);
-
     if (firstResponse.status !== 201) {
       logger.error(
         `Create User fail. Expected 201 but got ${firstResponse.status}`
@@ -135,9 +132,7 @@ describe("Feature: User Resource - Validation", () => {
       logger.error(`Response Body: ${JSON.stringify(firstResponse.body)}`);
     }
     expect(firstResponse.status).toBe(201);
-
     logger.debug(`Second Request Body: ${JSON.stringify(userData)}`);
-
     const secondResponse: Response = await api
       .post("/users")
       .set(commonHeaders)
@@ -146,12 +141,10 @@ describe("Feature: User Resource - Validation", () => {
     logger.debug(
       `Second Response Body: ${JSON.stringify(secondResponse.body)}`
     );
-
     if (secondResponse.status !== 422) {
       logger.error(`Expected 422 but got ${secondResponse.status}`);
       logger.error(`Response Body: ${JSON.stringify(secondResponse.body)}`);
     }
-
     expect(secondResponse.status).toBe(422);
     expect(secondResponse.body[0].field).toBe("email");
     expect(secondResponse.body[0].message).toBe("has already been taken");
@@ -164,19 +157,16 @@ describe("Feature: User Resource - Validation", () => {
     };
     logger.info("=== START: NEGATIVE - INVALID GENDER ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
-
     const response: Response = await api
       .post("/users")
       .set(commonHeaders)
       .send(userData);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
-
     if (response.status !== 422) {
       logger.error(`Expected 422 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(422);
     expect(response.body[0].field).toBe("gender");
     expect(response.body[0].message).toBe(
@@ -190,19 +180,16 @@ describe("Feature: User Resource - Validation", () => {
       status: "Sick" as any,
     };
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
-
     const response: Response = await api
       .post("/users")
       .set(commonHeaders)
       .send(userData);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
-
     if (response.status !== 422) {
       logger.error(`Expected 422 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(422);
     expect(response.body[0].field).toBe("status");
     expect(response.body[0].message).toBe("can't be blank");
@@ -214,19 +201,16 @@ describe("Feature: User Resource - Validation", () => {
       email: "fadidajunaedy@mail.com",
     };
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
-
     const response: Response = await api
       .post("/users")
       .set(commonHeaders)
       .send(userData);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
-
     if (response.status !== 422) {
       logger.error(`Expected 422 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(422);
     expect(response.body[0].field).toBe("gender");
     expect(response.body[0].message).toBe(
@@ -242,19 +226,16 @@ describe("Feature: User Resource - Validation", () => {
       email: "fadidajunaedy.com",
     };
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
-
     const response: Response = await api
       .post("/users")
       .set(commonHeaders)
       .send(userData);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
-
     if (response.status !== 422) {
       logger.error(`Expected 422 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(422);
     expect(response.body[0].field).toBe("email");
     expect(response.body[0].message).toBe("is invalid");
