@@ -4,7 +4,7 @@ import { Post } from "../interfaces/post.interface";
 const generatePost = (userId?: number): Post => {
   return {
     user_id: userId,
-    title: randSentence(),
+    title: randSentence({ maxCharCount: 100 }),
     body: randParagraph(),
   };
 };
