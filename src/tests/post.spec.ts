@@ -215,9 +215,6 @@ describe.only("Feature: User Posts - Validation", () => {
     }
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("Invalid token");
-    logger.info(
-      "Create User Post successfully failed because token Authorization is invalid"
-    );
   });
 
   test("Should return 401 when Authentication Token is missing", async () => {
@@ -231,8 +228,5 @@ describe.only("Feature: User Posts - Validation", () => {
     }
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("Authentication failed");
-    logger.info(
-      "Create User Post successfully failed because there is no header Authorization"
-    );
   });
 });
