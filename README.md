@@ -57,14 +57,9 @@ This project includes a GitHub Actions workflow (`.github/workflows/api-test.yml
 **Root Cause Analysis:**
 The GoRest public API implements **IP Filtering** that blocks requests originating from Cloud Data Centers (such as GitHub Actions Runners) to prevent automation abuse.
 
-**Verification:**
+## Verification
+
 The test suite passes **100% successfully** when executed in a Local Environment (Residential IP).
 
 **Evidence:**
 _(Please refer to the screenshots in the `docs/evidence` folder for the local execution report)_
-
-## Author
-
-**Fadida Junaedy**
-
-- LinkedIn: [https://www.linkedin.com/in/fadidajunaedy/]
