@@ -13,37 +13,37 @@ describe("Feature: User Resource - CRUD Operations", () => {
     userData = generateUser();
   });
 
-  test("Should create a new user successfully with valid data (201 Created)", async () => {
-    logger.info("=== START: CREATE USER ===");
-    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
+  beforeEach(() => {
+    const testName = expect.getState().currentTestName;
+    logger.info(`=== START: "${testName}" ===`);
+  });
 
+  afterEach(() => {
+    const testName = expect.getState().currentTestName;
+    logger.info(`=== END: "${testName}" ===`);
+  });
+
+  test("Should create a new user successfully with valid data (201 Created)", async () => {
+    logger.debug(`Request Body: ${JSON.stringify(userData)}`);
     const response: Response = await api
       .post("/users")
       .set(commonHeaders)
       .send(userData);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
-
     if (response.status !== 201) {
-      logger.error(
-        `Create User failed. Expected 201 but got ${response.status}`
-      );
+      logger.error(`Create User fail. Expected 201 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(201);
     expect(response.body.name).toBe(userData.name);
     expect(response.body.email).toBe(userData.email);
-
     userId = response.body.id;
     logger.info(`Create User success with ID: ${userId}`);
-    logger.info("=== END: CREATE USER ===");
   });
 
   test("Should retrieve user details successfully using valid ID (200 OK)", async () => {
-    logger.info("=== START: GET USER DETAIL ===");
     logger.debug(`ID Param: ${userId}`);
-
     const response: Response = await api
       .get(`/users/${userId}`)
       .set(commonHeaders);
@@ -51,89 +51,74 @@ describe("Feature: User Resource - CRUD Operations", () => {
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
 
     if (response.status !== 200) {
-      logger.error(`Get User failed. Expected 200 but got ${response.status}`);
+      logger.error(`Get User fail. Expected 200 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(200);
     expect(response.body.name).toBe(userData.name);
     expect(response.body.email).toBe(userData.email);
-
-    logger.info("Get Detail User success");
-    logger.info("=== END: GET USER DETAIL ===");
   });
 
   test("Should update user status successfully (200 OK)", async () => {
     const newStatus: string =
       userData.status == "active" ? "inactive" : "active";
-    logger.info("=== START: UPDATE USER ===");
     logger.debug(`ID Params: ${userId}`);
     logger.debug(`Request Body: ${JSON.stringify({ status: newStatus })}`);
-
     const response: Response = await api
       .patch(`/users/${userId}`)
       .set(commonHeaders)
       .send({ status: newStatus });
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
-
     if (response.status !== 200) {
-      logger.error(
-        `Update User failed. Expected 200 but got ${response.status}`
-      );
+      logger.error(`Update User fail. Expected 200 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(200);
     expect(response.body.name).toBe(userData.name);
     expect(response.body.email).toBe(userData.email);
     expect(response.body.status).not.toBe(userData.status);
-
-    logger.info("Update User success");
-    logger.info("=== END: UPDATE USER ===");
   });
 
-  test("Should delete user successfully and verify non-existence (204 No Response Body)", async () => {
-    logger.info("=== START: DELETE USER ===");
+  test("Should delete user successfully and verify non-existence (404 No Response Body)", async () => {
     logger.debug(`ID Params: ${userId}`);
-
     const response: Response = await api
       .delete(`/users/${userId}`)
       .set(commonHeaders);
     if (response.status !== 204) {
-      logger.error(
-        `Delete User failed. Expected 204 but got ${response.status}`
-      );
+      logger.error(`Delete User fail. Expected 204 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(204);
-
     logger.info("Delete User success");
     logger.info(`Verify the deletion User with ID: ${userId}`);
     logger.debug(`ID Params: ${userId}`);
-
     const verifyResponse: Response = await api
       .get(`/users/${userId}`)
       .set(commonHeaders);
     if (verifyResponse.status !== 404) {
       logger.error(
-        `Verify User deletion failed. Expected 404 but got ${verifyResponse.status}`
+        `Verify User deletion fail. Expected 404 but got ${verifyResponse.status}`
       );
       logger.error(`Response Body: ${JSON.stringify(verifyResponse.body)}`);
     }
-
     expect(verifyResponse.status).toBe(404);
-
-    logger.info("Verify User deletion success");
-    logger.info("=== END: DELETE USER ===");
   });
 });
 
 describe("Feature: User Resource - Validation", () => {
+  beforeEach(() => {
+    const testName = expect.getState().currentTestName;
+    logger.info(`=== START: "${testName}" ===`);
+  });
+
+  afterEach(() => {
+    const testName = expect.getState().currentTestName;
+    logger.info(`=== END: "${testName}" ===`);
+  });
+
   test("Should return 422 when creating a user with a duplicated email", async () => {
     const userData: User = generateUser();
-    logger.info("=== START: NEGATIVE - DUPLICATE EMAIL ===");
     logger.debug(`First Request Body: ${JSON.stringify(userData)}`);
 
     const firstResponse: Response = await api
@@ -145,7 +130,7 @@ describe("Feature: User Resource - Validation", () => {
 
     if (firstResponse.status !== 201) {
       logger.error(
-        `Create User failed. Expected 201 but got ${firstResponse.status}`
+        `Create User fail. Expected 201 but got ${firstResponse.status}`
       );
       logger.error(`Response Body: ${JSON.stringify(firstResponse.body)}`);
     }
@@ -170,9 +155,6 @@ describe("Feature: User Resource - Validation", () => {
     expect(secondResponse.status).toBe(422);
     expect(secondResponse.body[0].field).toBe("email");
     expect(secondResponse.body[0].message).toBe("has already been taken");
-
-    logger.info("Create User successfully failed because email is duplicated");
-    logger.info("=== END: NEGATIVE - DUPLICATE EMAIL ===");
   });
 
   test("Should return 422 when 'gender' value is invalid", async () => {
@@ -200,9 +182,6 @@ describe("Feature: User Resource - Validation", () => {
     expect(response.body[0].message).toBe(
       "can't be blank, can be male of female"
     );
-
-    logger.info("Create User successfully failed because gender is invalid");
-    logger.info("=== END: NEGATIVE - INVALID GENDER ===");
   });
 
   test("Should return 422 when 'status' value is invalid", async () => {
@@ -210,7 +189,6 @@ describe("Feature: User Resource - Validation", () => {
       ...generateUser(),
       status: "Sick" as any,
     };
-    logger.info("=== START: NEGATIVE - INVALID STATUS ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api
@@ -228,9 +206,6 @@ describe("Feature: User Resource - Validation", () => {
     expect(response.status).toBe(422);
     expect(response.body[0].field).toBe("status");
     expect(response.body[0].message).toBe("can't be blank");
-
-    logger.info("Create User successfully failed because status is invalid");
-    logger.info("=== END: NEGATIVE - INVALID STATUS ===");
   });
 
   test("Should return 422 when mandatory fields are missing", async () => {
@@ -238,8 +213,6 @@ describe("Feature: User Resource - Validation", () => {
       name: "Fadida Junaedy",
       email: "fadidajunaedy@mail.com",
     };
-
-    logger.info("=== START: NEGATIVE - MISSING FIELDS ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api
@@ -261,9 +234,6 @@ describe("Feature: User Resource - Validation", () => {
     );
     expect(response.body[1].field).toBe("status");
     expect(response.body[1].message).toBe("can't be blank");
-
-    logger.info("Create User successfully failed because status is invalid");
-    logger.info("=== END: NEGATIVE - MISSING FIELDS ===");
   });
 
   test("Should return 422 when 'email' format is invalid", async () => {
@@ -271,7 +241,6 @@ describe("Feature: User Resource - Validation", () => {
       ...generateUser(),
       email: "fadidajunaedy.com",
     };
-    logger.info("=== START: NEGATIVE - INVALID EMAIL ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api
@@ -289,41 +258,37 @@ describe("Feature: User Resource - Validation", () => {
     expect(response.status).toBe(422);
     expect(response.body[0].field).toBe("email");
     expect(response.body[0].message).toBe("is invalid");
-
-    logger.info("Create User successfully failed because email is invalid");
-    logger.info("=== END: NEGATIVE - INVALID EMAIL ===");
   });
 });
 
 describe("Feature: User Resource - Security & Authentication", () => {
+  beforeEach(() => {
+    const testName = expect.getState().currentTestName;
+    logger.info(`=== START: "${testName}" ===`);
+  });
+
+  afterEach(() => {
+    const testName = expect.getState().currentTestName;
+    logger.info(`=== END: "${testName}" ===`);
+  });
+
   test("Should return 401 when Authorization header is missing", async () => {
     const userData: User = generateUser();
-    logger.info("=== START: SECURITY - NO AUTH HEADER ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
-
     const response: Response = await api.post("/users").send(userData);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
-
     if (response.status !== 401) {
       logger.error(`Expected 401 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("Authentication failed");
-
-    logger.info(
-      "Create User successfully failed because there is no header Authorization"
-    );
-    logger.info("=== END: SECURITY - NO AUTH HEADER ===");
   });
 
   test("Should return 401 when Authorization token is invalid", async () => {
     const userData: User = generateUser();
-    logger.info("=== START: INVALID TOKEN ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
-
     const response: Response = await api
       .post("/users")
       .set({
@@ -334,18 +299,11 @@ describe("Feature: User Resource - Security & Authentication", () => {
       .send(userData);
     logger.debug(`Response Status: ${response.status}`);
     logger.debug(`Response Body: ${JSON.stringify(response.body)}`);
-
     if (response.status !== 401) {
       logger.error(`Expected 401 but got ${response.status}`);
       logger.error(`Response Body: ${JSON.stringify(response.body)}`);
     }
-
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("Invalid token");
-
-    logger.info(
-      "Create User successfully failed because token Authorization is invalid"
-    );
-    logger.info("=== END: INVALID TOKEN ===");
   });
 });
