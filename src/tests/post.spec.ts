@@ -7,7 +7,7 @@ import logger from "../utils/logger";
 import generateUser from "../utils/user.generator";
 import generatePost from "../utils/post.generator";
 
-describe.only("Feature: User Posts", () => {
+describe("Feature: User Posts", () => {
   let userId: number;
 
   beforeAll(async () => {
