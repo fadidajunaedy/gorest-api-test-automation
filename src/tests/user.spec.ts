@@ -14,7 +14,7 @@ describe("Feature: User Resource - CRUD Operations", () => {
   });
 
   test("Should create a new user successfully with valid data (201 Created)", async () => {
-    logger.info("== STARTING CASE: CREATE USER ==");
+    logger.info("=== START: CREATE USER ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api
@@ -37,11 +37,11 @@ describe("Feature: User Resource - CRUD Operations", () => {
 
     userId = response.body.id;
     logger.info(`Create User success with ID: ${userId}`);
-    logger.info("== END CASE: CREATE USER ==");
+    logger.info("=== END: CREATE USER ===");
   });
 
   test("Should retrieve user details successfully using valid ID (200 OK)", async () => {
-    logger.info("== STARTING CASE: GET USER DETAIL ==");
+    logger.info("=== START: GET USER DETAIL ===");
     logger.debug(`ID Param: ${userId}`);
 
     const response: Response = await api
@@ -60,13 +60,13 @@ describe("Feature: User Resource - CRUD Operations", () => {
     expect(response.body.email).toBe(userData.email);
 
     logger.info("Get Detail User success");
-    logger.info("== END CASE: GET USER DETAIL ==");
+    logger.info("=== END: GET USER DETAIL ===");
   });
 
   test("Should update user status successfully (200 OK)", async () => {
     const newStatus: string =
       userData.status == "active" ? "inactive" : "active";
-    logger.info("== STARTING CASE: UPDATE USER ==");
+    logger.info("=== START: UPDATE USER ===");
     logger.debug(`ID Params: ${userId}`);
     logger.debug(`Request Body: ${JSON.stringify({ status: newStatus })}`);
 
@@ -90,11 +90,11 @@ describe("Feature: User Resource - CRUD Operations", () => {
     expect(response.body.status).not.toBe(userData.status);
 
     logger.info("Update User success");
-    logger.info("== END CASE: UPDATE USER ==");
+    logger.info("=== END: UPDATE USER ===");
   });
 
   test("Should delete user successfully and verify non-existence (204 No Response Body)", async () => {
-    logger.info("== STARTING CASE: DELETE USER ==");
+    logger.info("=== START: DELETE USER ===");
     logger.debug(`ID Params: ${userId}`);
 
     const response: Response = await api
@@ -126,14 +126,14 @@ describe("Feature: User Resource - CRUD Operations", () => {
     expect(verifyResponse.status).toBe(404);
 
     logger.info("Verify User deletion success");
-    logger.info("== END CASE: DELETE USER ==");
+    logger.info("=== END: DELETE USER ===");
   });
 });
 
 describe("Feature: User Resource - Validation", () => {
   test("Should return 422 when creating a user with a duplicated email", async () => {
     const userData: User = generateUser();
-    logger.info("== STARTING CASE: CREATE USER WITH DUPLICATED EMAIL ==");
+    logger.info("=== START: NEGATIVE - DUPLICATE EMAIL ===");
     logger.debug(`First Request Body: ${JSON.stringify(userData)}`);
 
     const firstResponse: Response = await api
@@ -172,7 +172,7 @@ describe("Feature: User Resource - Validation", () => {
     expect(secondResponse.body[0].message).toBe("has already been taken");
 
     logger.info("Create User successfully failed because email is duplicated");
-    logger.info("== END CASE: CREATE USER WITH DUPLICATED EMAIL ==");
+    logger.info("=== END: NEGATIVE - DUPLICATE EMAIL ===");
   });
 
   test("Should return 422 when 'gender' value is invalid", async () => {
@@ -180,7 +180,7 @@ describe("Feature: User Resource - Validation", () => {
       ...generateUser(),
       gender: "Lanang" as any,
     };
-    logger.info("== STARTING CASE: CREATE USER WITH INVALID GENDER ==");
+    logger.info("=== START: NEGATIVE - INVALID GENDER ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api
@@ -202,7 +202,7 @@ describe("Feature: User Resource - Validation", () => {
     );
 
     logger.info("Create User successfully failed because gender is invalid");
-    logger.info("== END CASE: CREATE USER WITH INVALID EMAIL ==");
+    logger.info("=== END: NEGATIVE - INVALID GENDER ===");
   });
 
   test("Should return 422 when 'status' value is invalid", async () => {
@@ -210,7 +210,7 @@ describe("Feature: User Resource - Validation", () => {
       ...generateUser(),
       status: "Sick" as any,
     };
-    logger.info("== STARTING CASE: CREATE USER WITH INVALID STATUS ==");
+    logger.info("=== START: NEGATIVE - INVALID STATUS ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api
@@ -230,7 +230,7 @@ describe("Feature: User Resource - Validation", () => {
     expect(response.body[0].message).toBe("can't be blank");
 
     logger.info("Create User successfully failed because status is invalid");
-    logger.info("== END CASE: CREATE USER WITH INVALID STATUS ==");
+    logger.info("=== END: NEGATIVE - INVALID STATUS ===");
   });
 
   test("Should return 422 when mandatory fields are missing", async () => {
@@ -239,9 +239,7 @@ describe("Feature: User Resource - Validation", () => {
       email: "fadidajunaedy@mail.com",
     };
 
-    logger.info(
-      "== STARTING CASE: CREATE USER WITH MISSING MANDATORY FIELDS =="
-    );
+    logger.info("=== START: NEGATIVE - MISSING FIELDS ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api
@@ -265,7 +263,7 @@ describe("Feature: User Resource - Validation", () => {
     expect(response.body[1].message).toBe("can't be blank");
 
     logger.info("Create User successfully failed because status is invalid");
-    logger.info("== END CASE: CREATE USER WITH MISSING MANDATORY FIELDS ==");
+    logger.info("=== END: NEGATIVE - MISSING FIELDS ===");
   });
 
   test("Should return 422 when 'email' format is invalid", async () => {
@@ -273,7 +271,7 @@ describe("Feature: User Resource - Validation", () => {
       ...generateUser(),
       email: "fadidajunaedy.com",
     };
-    logger.info("== STARTING CASE: CREATE USER WITH INVALID EMAIL ==");
+    logger.info("=== START: NEGATIVE - INVALID EMAIL ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api
@@ -293,16 +291,14 @@ describe("Feature: User Resource - Validation", () => {
     expect(response.body[0].message).toBe("is invalid");
 
     logger.info("Create User successfully failed because email is invalid");
-    logger.info("== END CASE: CREATE USER WITH INVALID EMAIL ==");
+    logger.info("=== END: NEGATIVE - INVALID EMAIL ===");
   });
 });
 
 describe("Feature: User Resource - Security & Authentication", () => {
   test("Should return 401 when Authorization header is missing", async () => {
     const userData: User = generateUser();
-    logger.info(
-      "== STARTING CASE: CREATE USER WITHOUT HEADER AUTHORIZATION =="
-    );
+    logger.info("=== START: SECURITY - NO AUTH HEADER ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api.post("/users").send(userData);
@@ -320,14 +316,12 @@ describe("Feature: User Resource - Security & Authentication", () => {
     logger.info(
       "Create User successfully failed because there is no header Authorization"
     );
-    logger.info("== END CASE: CREATE USER WITHOUT HEADER AUTHORIZATION ==");
+    logger.info("=== END: SECURITY - NO AUTH HEADER ===");
   });
 
   test("Should return 401 when Authorization token is invalid", async () => {
     const userData: User = generateUser();
-    logger.info(
-      "== STARTING CASE: CREATE USER WITH INVALID TOKEN AUTHORIZATION =="
-    );
+    logger.info("=== START: INVALID TOKEN ===");
     logger.debug(`Request Body: ${JSON.stringify(userData)}`);
 
     const response: Response = await api
@@ -352,6 +346,6 @@ describe("Feature: User Resource - Security & Authentication", () => {
     logger.info(
       "Create User successfully failed because token Authorization is invalid"
     );
-    logger.info("== END CASE: CREATE USER WITH INVALID TOKEN AUTHORIZATION ==");
+    logger.info("=== END: INVALID TOKEN ===");
   });
 });
