@@ -14,7 +14,6 @@ export const commonHeaders = {
   Authorization: `Bearer ${process.env.GOREST_ACCESS_TOKEN}`,
   "Content-Type": "application/json",
   Accept: "application/json",
-  "User-Agent": "PostmanRuntime/7.26.8",
 };
 
 export default api;
