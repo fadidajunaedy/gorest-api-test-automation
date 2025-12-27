@@ -24,6 +24,7 @@ describe.only("Feature: User Posts", () => {
     expect(response.status).toBe(201);
     expect(response.body.id).toBeDefined();
     userId = response.body.id;
+    logger.info(`Created User with ID: ${userId}`);
   });
 
   afterAll(async () => {
