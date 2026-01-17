@@ -1,4 +1,11 @@
-# GOREST API TEST AUTOMATION
+# GoREST API Automation
+
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Jest](https://img.shields.io/badge/-jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)
+![Supertest](https://img.shields.io/badge/-supertest-%23404040?style=for-the-badge&logo=npm&logoColor=white)
+![Winston](https://img.shields.io/badge/-winston-%23339933?style=for-the-badge&logo=npm&logoColor=white)
+
+## Overview
 
 This project contains suites of automated API tests designed for the GoRest public API.
 
