@@ -4,3 +4,4 @@ html-report/
 logs/
 *.log
 npm-debug.log
+.DS_Store
