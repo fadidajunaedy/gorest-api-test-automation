@@ -70,3 +70,7 @@ The test suite passes **100% successfully** when executed in a Local Environment
 
 **Evidence:**
 _(Please refer to the screenshots in the `docs/evidence` folder for the local execution report)_
+
+## Resources & Credits
+
+This project tests the open-source API Go REST: https://gorest.co.in
